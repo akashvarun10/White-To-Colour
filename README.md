@@ -1,2 +1,4 @@
-# White-To-Colour
- ( Image Colorizer ) in Python 
+Taking reference from the following paper .. Integrated with FastAPI & HTML
+ 
+Colorful Image Colorization [Project Page] 
+Richard Zhang, Phillip Isola, Alexei A. Efros. In ECCV, 2016.
