@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Colorizer</title>
+    <style>
+        #loading {
+            display: none;
+        }
+
+        #result img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        #error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Colorizer</h1>
+    
+    <form id="colorizeForm" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*" required>
+        <label for="useGPU">Use GPU:</label>
+        <input type="checkbox" name="useGPU" id="useGPU">
+        <button type="button" onclick="colorizeImage()">Colorize Image</button>
+    </form>
+
+    <div id="loading">Loading...</div>
+
+    <div id="result">
+        <!-- Colorized image will be displayed here -->
+    </div>
+
+    <div id="error"></div>
+
+    <script>
+        async function colorizeImage() {
+            const form = document.getElementById('colorizeForm');
+            const formData = new FormData(form);
+
+            const loadingDiv = document.getElementById('loading');
+            const resultDiv = document.getElementById('result');
+            const errorDiv = document.getElementById('error');
+
+            loadingDiv.style.display = 'block';
+            resultDiv.innerHTML = '';
+            errorDiv.innerHTML = '';
+
+            try {
+                const response = await fetch('http://localhost:8000/colorize', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const imageUrl = URL.createObjectURL(await response.blob());
+                    resultDiv.innerHTML = `<img src="${imageUrl}" alt="Colorized Image">`;
+                } else {
+                    const errorMessage = `Colorization failed: ${response.statusText}`;
+                    errorDiv.innerHTML = errorMessage;
+                    console.error(errorMessage);
+                }
+            } catch (error) {
+                const errorMessage = `Error: ${error.message}`;
+                errorDiv.innerHTML = errorMessage;
+                console.error(errorMessage);
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
